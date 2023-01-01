@@ -73,14 +73,19 @@ public:
                     Vector3 t(ray.GetTrajectory());
                     Vector3 normal(facet_manager->GetFacet(n_close).GetNormal());
                     double dotp = normal.dot(t);
-                    normal *= (dotp < 0) - (dotp > 0);
+                    bool out_to_in{dotp < 0};
+                    normal *= out_to_in - !out_to_in;
                     Vector3 rot_axis(t.cross(normal));
 
                     if ((abs(rot_axis.x()) + abs(rot_axis.y()) + abs(rot_axis.z())) < tol) {
                         ray = RayIntersect(p, t);
                     } else {
                         double theta_1 = acos(normal.dot(t) / (normal.length() * t.length())) - 0.5 * M_PI;
-                        double theta_2 = asin(sin(theta_1) / facet_manager->GetProperty(n_close));
+                        double refr_ind = facet_manager->GetProperty(n_close);
+                        if(!out_to_in){
+                            refr_ind = 1. / refr_ind;
+                        }
+                        double theta_2 = asin(sin(theta_1) / refr_ind);
                         double theta_tot = theta_1 - theta_2;
                         t = Rotate(t, rot_axis, theta_tot);
                         ray = RayIntersect(p, t);
