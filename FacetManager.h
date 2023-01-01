@@ -19,6 +19,21 @@ public:
         : Facet(A, B, C, ComputeNormal(A, B, C)){}
     Facet(const Vector3& A, const Vector3& B, const Vector3& C, const Vector3& N)
         : points{A, B, C}, normal(N) {}
+    Facet(const Facet& other)
+        : points{other.GetA(), other.GetB(), other.GetC()}, normal(other.normal){
+    }
+
+    Facet& operator=(const Facet& other){
+        if(this == &other)
+            return *this;
+
+        for(uint8_t i = 0; i < 3; i++)
+            points[i] = other.points[i];
+
+        normal = other.normal;
+
+        return *this;
+    }
 
     _ray_facet_intersect ComputeIntersect(const Vector3& source, const Vector3& traject) const {
         _ray_facet_intersect isct;
@@ -39,7 +54,8 @@ public:
 
 private :
     Vector3 ComputeNormal(const Vector3& A, const Vector3& B, const Vector3& C) const {
-        return (B - A).cross(C - A);
+        Vector3 norm = (B - A).cross(C - A);
+        return norm / norm.length();
     }
     Vector3 points[3];
     Vector3 normal;

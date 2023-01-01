@@ -18,37 +18,6 @@ public:
 
     void AdvanceRays() {
         const double tol{DBL_EPSILON};
-/*         auto ObjIntersect = [](RayIntersect& ray) {
-            const double tol{DBL_EPSILON};
-            // Triangle
-            Vector3 A(1., 0., 0.);
-            Vector3 B(0., 1., 0.);
-            Vector3 C(1., 0., 1.);
-            const double refr_ind{2.};
-
-            Facet facet(A, B, C);
-            _ray_facet_intersect isct = facet.ComputeIntersect(ray.GetPoint(), ray.GetTrajectory());
-
-            if (isct.is_on_facet) {
-                Vector3 p(ray.GetPoint() + ray.GetTrajectory() * isct.uvt.t);
-                Vector3 t(ray.GetTrajectory());
-                Vector3 normal(facet.GetNormal());
-                double dotp = normal.dot(t);
-                normal *= (dotp < 0) - (dotp > 0);
-                Vector3 rot_axis(t.cross(normal));
-
-                if ((abs(rot_axis.x()) + abs(rot_axis.y()) + abs(rot_axis.z())) < tol)
-                    return RayIntersect(p, t);
-
-                double theta_1 = acos(normal.dot(t) / (normal.length() * t.length())) - 0.5 * M_PI;
-                double theta_2 = asin(sin(theta_1) / refr_ind);
-                double theta_tot = theta_1 - theta_2;
-                t = Rotate(t, rot_axis, theta_tot);
-                return RayIntersect(p, t);
-            } else {
-                return RayIntersect(ray.GetPoint() + ray.GetTrajectory(), ray.GetTrajectory());
-            }
-        }; */
 
         const int n_rays{static_cast<int>(rays.size())};
         for (int n = 0; n < n_rays; n++) {
