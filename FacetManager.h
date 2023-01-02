@@ -1,8 +1,10 @@
+
 #ifndef FACETMANAGER_H_
 #define FACETMANAGER_H_
-
-#include <vector>
 #include <DaRe/Utilities/Vector.h>
+
+#include <cfloat>
+#include <vector>
 #include "Geometry.h"
 namespace caster{
 

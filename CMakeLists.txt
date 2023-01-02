@@ -76,6 +76,7 @@ endif()
 # add target sources
 target_sources(caster
 	PUBLIC main.cpp
+    PUBLIC RayTracer.cpp
 )
 
 # Specify the include directories

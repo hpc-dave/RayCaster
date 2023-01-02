@@ -1,10 +1,10 @@
+
 #ifndef GEOMETRY_H_
 #define GEOMETRY_H_
 #include <cmath>
 #include <limits>
 #include <algorithm>
 #include <cfloat>
-#include <cmath>
 #include <DaRe/Utilities/Vector.h>
 #include "Quaternion.h"
 
@@ -22,12 +22,12 @@ struct conditional{
     }
 };
 
-void SolveMatrixSystem3x3(const double A[3][3], const double b[3], double x[3]) {
+inline void SolveMat3x3(const double A[3][3], const double b[3], double x[3]) {
     /*
      * Uses Cramer's rule for solving the system directly
      * could be optimized by using column major matrices
      */
-    auto GetDeterminant3x3 = [](const double* A) {
+    auto GetDet3x3 = [](const double* A) {
         enum {
             a11,
             a12,
@@ -46,7 +46,7 @@ void SolveMatrixSystem3x3(const double A[3][3], const double b[3], double x[3]) 
         return A[a11] * MinA - A[a12] * MinB + A[a13] * MinC;
     };
 
-    const double detA{GetDeterminant3x3(A[0])};
+    const double detA{GetDet3x3(A[0])};
 
     // test if matrix can be solved
     if (fabs(detA) < DBL_EPSILON) {
@@ -61,7 +61,7 @@ void SolveMatrixSystem3x3(const double A[3][3], const double b[3], double x[3]) 
     A_m[1][0] = b[1];
     A_m[2][0] = b[2];
 
-    x[0] = GetDeterminant3x3(A_m[0]) / detA;
+    x[0] = GetDet3x3(A_m[0]) / detA;
 
     A_m[0][0] = A[0][0];
     A_m[1][0] = A[1][0];
@@ -71,7 +71,7 @@ void SolveMatrixSystem3x3(const double A[3][3], const double b[3], double x[3]) 
     A_m[1][1] = b[1];
     A_m[2][1] = b[2];
 
-    x[1] = GetDeterminant3x3(A_m[0]) / detA;
+    x[1] = GetDet3x3(A_m[0]) / detA;
 
     A_m[0][1] = A[0][1];
     A_m[1][1] = A[1][1];
@@ -81,7 +81,7 @@ void SolveMatrixSystem3x3(const double A[3][3], const double b[3], double x[3]) 
     A_m[1][2] = b[1];
     A_m[2][2] = b[2];
 
-    x[2] = GetDeterminant3x3(A_m[0]) / detA;
+    x[2] = GetDet3x3(A_m[0]) / detA;
 }
 
 struct _uvt{
@@ -90,7 +90,7 @@ struct _uvt{
     double u, v, t;
 };
 
-_uvt GetBarycentricCoordinates(const Vector3& vA,
+inline _uvt GetBarycentricCoordinates(const Vector3& vA,
                                const Vector3& vB,
                                const Vector3& vC,
                                const Vector3& vO,
@@ -105,7 +105,7 @@ _uvt GetBarycentricCoordinates(const Vector3& vA,
 
     double x[3] = {DBL_MAX, DBL_MAX, DBL_MAX};
 
-    SolveMatrixSystem3x3(A, AO.data(), x);
+    SolveMat3x3(A, AO.data(), x);
 
     _uvt uvt;
     uvt.u = x[0];
@@ -115,7 +115,7 @@ _uvt GetBarycentricCoordinates(const Vector3& vA,
     return uvt;
 }
 
-Vector3 Rotate(const Vector3& p, const Vector3& axis, double theta) {
+inline Vector3 Rotate(const Vector3& p, const Vector3& axis, double theta) {
     Quaternion q_p(0., p.x(), p.y(), p.z());
 
     const double f{sin(theta / 2.)};
@@ -127,6 +127,7 @@ Vector3 Rotate(const Vector3& p, const Vector3& axis, double theta) {
 
     Vector3 res(q_res.x(), q_res.y(), q_res.z());
     return res;
+    return Vector3();
 }
 
 } // namespace caster
