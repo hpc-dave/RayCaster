@@ -1,6 +1,8 @@
 #ifndef RAYTRACER_H_
 #define RAYTRACER_H_
 
+#include <iostream>
+#include <fstream>
 #include <vector>
 #include <Ray.h>
 #include <FacetManager.h>
@@ -13,6 +15,8 @@ public:
     void SetSource(const std::vector<RayIntersect>& sources);
 
     void AdvanceRays();
+
+    void WriteToFile(const std::string& file_name);
 
     const std::vector<Ray>& GetRays() const { return rays; }
 

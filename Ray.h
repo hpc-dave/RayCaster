@@ -40,6 +40,10 @@ public:
         return intersects;
     }
 
+    std::size_t GetNumIntersects() const{
+        return intersects.size();
+    }
+
 private:
     std::vector<RayIntersect> intersects;
 };

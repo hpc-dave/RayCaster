@@ -1,4 +1,7 @@
 
+#include <string>
+#include <sstream>
+#include <DaRe/FileFormats/XML.h>
 #include "RayTracer.h"
 
 namespace caster{
@@ -75,5 +78,27 @@ void RayTracer::AdvanceRays() {
                 break;
         }
     }
+}
+
+void RayTracer::WriteToFile(const std::string& file_name){
+
+    dare::ff::XMLNode main_node("Rays",
+                                { dare::ff::_XMLAttribute("encoding", "ASCII"),
+                                  dare::ff::_XMLAttribute("type", "custom")    });
+
+    for (std::size_t n = 0; n < rays.size(); n++) {
+        dare::ff::XMLNode ray_node("ray");
+        ray_node << dare::ff::XMLNode("ID", std::to_string(n));
+        ray_node << dare::ff::XMLNode("num intersects", std::to_string(rays[n].GetNumIntersects()));
+        std::ostringstream ray_data;
+        for(const auto& itsc : rays[n].GetAllIntersects()){
+            ray_data << itsc.GetPoint() << ',' << itsc.GetTrajectory() << ';';
+        }
+        ray_node << dare::ff::XMLNode("data", ray_data.str());
+        main_node << ray_node;
+    }
+    dare::ff::XML xml_file(main_node);
+
+    xml_file.WriteToFile(file_name, std::ios::out);
 }
 } // namespace caster
