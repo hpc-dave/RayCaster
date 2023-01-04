@@ -1,4 +1,5 @@
 
+#include <cmath>
 #include <string>
 #include <sstream>
 #include <DaRe/FileFormats/XML.h>
@@ -50,15 +51,19 @@ void RayTracer::AdvanceRays() {
                 normal *= out_to_in - !out_to_in;
                 Vector3 rot_axis(t.cross(normal));
 
-                if ((abs(rot_axis.x()) + abs(rot_axis.y()) + abs(rot_axis.z())) < tol) {
+                if ((fabs(rot_axis.x()) + fabs(rot_axis.y()) + fabs(rot_axis.z())) < tol) {
                     ray = RayIntersect(p, t);
                 } else {
-                    double theta_1 = acos(normal.dot(t) / (normal.length() * t.length())) - 0.5 * M_PI;
+                    double theta_1 = std::acos(normal.dot(t) / (normal.length() * t.length())) - 0.5 * M_PI;
                     double refr_ind = facet_manager->GetProperty(n_close);
                     if (!out_to_in) {
                         refr_ind = 1. / refr_ind;
                     }
-                    double theta_2 = asin(sin(theta_1) / refr_ind);
+                    double theta_manip = std::sin(theta_1) / refr_ind;
+                    if(fabs(theta_manip) >= 1.){
+                        std::cerr << "manipulated theta leads to total mirroring, functionality not implemented\n";
+                    }
+                    double theta_2 = std::asin(theta_manip);
                     double theta_tot = theta_1 - theta_2;
                     t = Rotate(t, rot_axis, theta_tot);
                     ray = RayIntersect(p, t);
@@ -89,7 +94,7 @@ void RayTracer::WriteToFile(const std::string& file_name){
     for (std::size_t n = 0; n < rays.size(); n++) {
         dare::ff::XMLNode ray_node("ray");
         ray_node << dare::ff::XMLNode("ID", std::to_string(n));
-        ray_node << dare::ff::XMLNode("num intersects", std::to_string(rays[n].GetNumIntersects()));
+        ray_node << dare::ff::XMLNode("num_intersects", std::to_string(rays[n].GetNumIntersects()));
         std::ostringstream ray_data;
         for(const auto& itsc : rays[n].GetAllIntersects()){
             ray_data << itsc.GetPoint() << ',' << itsc.GetTrajectory() << ';';

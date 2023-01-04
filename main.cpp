@@ -15,7 +15,7 @@ int main(int argc, char* argv[]){
 
     dare::ff::STL<double> stl("test.stl");
 
-    caster::FacetManager fman(caster::ConvertSTLtoFacetList(stl), 1.);
+    caster::FacetManager fman(caster::ConvertSTLtoFacetList(stl), 0.8);
     caster::RayTracer tracer(fman);
     std::vector<RayIntersect> source = {RayIntersect(Vector3(0., 0.2, 0.2), Vector3(1., 0., 0.))};
     source.push_back(RayIntersect(Vector3(1., 0.2, 0.2), Vector3(-1., 0., 0.)));
@@ -33,6 +33,8 @@ int main(int argc, char* argv[]){
             std::cout << '\t' << i << std::endl;
         }
     }
+
+    tracer.WriteToFile("output.xml");
 
     std::cout << "Hello World!\n";
 }
